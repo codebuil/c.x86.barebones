@@ -1,3 +1,4 @@
+ #include <stdint.h>
  int video;
  typedef int size_t;
  int NULL;
@@ -263,6 +264,23 @@ char digitToChar(int digit) {
     // Retorna o caractere correspondente
     return asciiChars[digit];
 }
+// Função para desenhar uma janela de cores na tela de texto
+void draw_window(int x, int y, int w, int h, uint8_t color) {
+    uint16_t *video_memory = (uint16_t *)0xB8000;
+    uint16_t attribute = (color << 8);
+
+    // Limite as coordenadas para evitar desenhar fora da tela
+    if (x < 0) x = 0;
+    if (y < 0) y = 0;
+
+    for (int row = y; row < y + h; row++) {
+        for (int col = x; col < x + w; col++) {
+            uint16_t *location = video_memory + (row * 80 + col);
+            *location = attribute | ' '; // Espaço em branco com a cor especificada
+        }
+    }
+}
+
 
  void kernel_main()
         {
@@ -275,10 +293,8 @@ char digitToChar(int digit) {
 			   timerss=(volatile unsigned int *)0xF0000;
 			   NULL=0;		
 			   cls();
-			   for(c=0;c<20;c++){
-			   	uintToStr(c*8,b);
-			   	prints(b);
-			   	printc(32);
+			   for(c=0;c<6;c++){
+			   	draw_window(1*c, 1*c, 20, 10, (c)*16);
 			   	
 			   }
 			   
