@@ -265,9 +265,10 @@ char digitToChar(int digit) {
     return asciiChars[digit];
 }
 // Função para desenhar uma janela de cores na tela de texto
-void draw_window(int x, int y, int w, int h, uint8_t color) {
+void draw_window(int x, int y, int w, int h, uint8_t color, uint8_t c) {
     uint16_t *video_memory = (uint16_t *)0xB8000;
     uint16_t attribute = (color << 8);
+    uint16_t cc = c;
 
     // Limite as coordenadas para evitar desenhar fora da tela
     if (x < 0) x = 0;
@@ -276,7 +277,7 @@ void draw_window(int x, int y, int w, int h, uint8_t color) {
     for (int row = y; row < y + h; row++) {
         for (int col = x; col < x + w; col++) {
             uint16_t *location = video_memory + (row * 80 + col);
-            *location = attribute | ' '; // Espaço em branco com a cor especificada
+            *location = attribute | cc; // Espaço em branco com a cor especificada
         }
     }
 }
@@ -294,7 +295,7 @@ void draw_window(int x, int y, int w, int h, uint8_t color) {
 			   NULL=0;		
 			   cls();
 			   for(c=0;c<6;c++){
-			   	draw_window(1*c, 1*c, 20, 10, (c)*16);
+			   	draw_window(1*c, 1*c, 20, 10, (c)*16,'-');
 			   	
 			   }
 			   
